@@ -12,3 +12,4 @@ atom.loadTimeStart = startTime
 atom.loadTimeEnd = endTime
 atom.loadTime = endTime - startTime
 console.log "Window load time: #{atom.getWindowLoadTime()}ms"
+atom.workspaceView.trigger 'ready'

@@ -174,6 +174,16 @@ class Atom extends Model
 
     @windowEventHandler = new WindowEventHandler
 
+  measure: (key, fn) ->
+    startTime = Date.now()
+    console.log key, startTime
+    value = fn()
+    endTime = Date.now()
+    @[key + 'Start'] = startTime
+    @[key + 'End'] = endTime
+    @[key] = endTime - startTime
+    value
+
   # Deprecated: Callers should be converted to use atom.deserializers
   registerRepresentationClass: ->
     deprecated("Callers should be converted to use atom.deserializers")
@@ -304,13 +314,13 @@ class Atom extends Model
     @config.load()
     @config.setDefaults('core', require('./workspace-view').configDefaults)
     @config.setDefaults('editor', require('./editor-view').configDefaults)
-    @keymaps.loadBundledKeymaps()
-    @themes.loadBaseStylesheets()
-    @packages.loadPackages()
-    @deserializeEditorWindow()
-    @packages.activate()
-    @keymaps.loadUserKeymap()
-    @requireUserInitScript()
+    @measure 'loadBundledKeymapsTime', => @keymaps.loadBundledKeymaps()
+    @measure 'loadBaseStylesheetsTime', => @themes.loadBaseStylesheets()
+    @measure 'packagesLoadTime', => @packages.loadPackages()
+    @measure 'deserializeEditorWindowTime', => @deserializeEditorWindow()
+    @measure 'packagesActivateTime', => @packages.activate()
+    @measure 'loadUserKeymapTime', => @keymaps.loadUserKeymap()
+    @measure 'requireUserInitScriptTime', => @requireUserInitScript()
     @menu.update()
 
     maximize = dimensions?.maximized and process.platform isnt 'darwin'

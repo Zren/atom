@@ -1,3 +1,4 @@
+global.shellTime.shellAppRequireTimeStart = Date.now()
 AtomWindow = require './atom-window'
 ApplicationMenu = require './application-menu'
 AtomProtocolHandler = require './atom-protocol-handler'
@@ -15,6 +16,7 @@ shell = require 'shell'
 url = require 'url'
 {EventEmitter} = require 'events'
 _ = require 'underscore-plus'
+global.shellTime.shellAppRequireTimeEnd = Date.now()
 
 socketPath =
   if process.platform is 'win32'
@@ -33,7 +35,11 @@ class AtomApplication
 
   # Public: The entry point into the Atom application.
   @open: (options) ->
-    createAtomApplication = -> new AtomApplication(options)
+
+    global.shellTime.shellAppCreateTimeStart = Date.now()
+    createAtomApplication = ->
+      global.shellTime.shellAppCreateTimeEnd = Date.now()
+      new AtomApplication(options)
 
     # FIXME: Sometimes when socketPath doesn't exist, net.connect would strangely
     # take a few seconds to trigger 'error' event, it could be a bug of node

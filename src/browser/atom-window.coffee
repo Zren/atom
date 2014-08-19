@@ -1,3 +1,4 @@
+global.shellTime.shellAtomWindowRequireTimeStart = Date.now()
 BrowserWindow = require 'browser-window'
 ContextMenu = require './context-menu'
 app = require 'app'
@@ -7,6 +8,7 @@ fs = require 'fs'
 url = require 'url'
 _ = require 'underscore-plus'
 {EventEmitter} = require 'events'
+global.shellTime.shellAtomWindowRequireTimeEnd = Date.now()
 
 module.exports =
 class AtomWindow
@@ -27,8 +29,10 @@ class AtomWindow
 
     global.atomApplication.addWindow(this)
 
+    global.shellTime.shellBrowserWindowTimeStart = Date.now()
     @browserWindow = new BrowserWindow show: false, title: 'Atom', icon: @constructor.iconPath
     @handleEvents()
+    global.shellTime.shellBrowserWindowTimeEnd = Date.now()
 
     loadSettings = _.extend({}, settings)
     loadSettings.windowState ?= '{}'
@@ -41,6 +45,8 @@ class AtomWindow
       loadSettings.shellLoadTimeEnd ?= Date.now()
       loadSettings.shellLoadTimeStart ?= global.shellStartTime
       loadSettings.shellLoadTime ?= loadSettings.shellLoadTimeEnd - loadSettings.shellLoadTimeStart
+
+      loadSettings = _.extend(loadSettings, global.shellTime)
 
     loadSettings.initialPath = pathToOpen
     if fs.statSyncNoException(pathToOpen).isFile?()

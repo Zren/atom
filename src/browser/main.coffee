@@ -1,5 +1,7 @@
 global.shellStartTime = Date.now()
+global.shellTime = {}
 
+global.shellTime.shellMainRequireTimeStart = Date.now()
 crashReporter = require 'crash-reporter'
 app = require 'app'
 fs = require 'fs'
@@ -8,6 +10,7 @@ path = require 'path'
 optimist = require 'optimist'
 nslog = require 'nslog'
 dialog = require 'dialog'
+global.shellTime.shellMainRequireTimeEnd = Date.now()
 
 console.log = nslog
 
@@ -34,6 +37,7 @@ start = ->
     setupCrashReporter()
 
   app.on 'finish-launching', ->
+    global.shellTime.shellAppFinishLaunchingTimeStart = Date.now()
     app.removeListener 'open-file', addPathToOpen
     app.removeListener 'open-url', addUrlToOpen
 
@@ -48,6 +52,7 @@ start = ->
       AtomApplication = require './atom-application'
 
     AtomApplication.open(args)
+    global.shellTime.shellAppFinishLaunchingTimeEnd = Date.now()
     console.log("App load time: #{Date.now() - global.shellStartTime}ms") unless args.test
 
 global.devResourcePath = process.env.ATOM_DEV_RESOURCE_PATH ? path.join(app.getHomeDir(), 'github', 'atom')
@@ -55,7 +60,9 @@ global.devResourcePath = process.env.ATOM_DEV_RESOURCE_PATH ? path.join(app.getH
 global.devResourcePath = path.normalize(global.devResourcePath) if global.devResourcePath
 
 setupCrashReporter = ->
+  global.shellTime.shellSetupCrashReporterTimeStart = Date.now()
   crashReporter.start(productName: 'Atom', companyName: 'GitHub')
+  global.shellTime.shellSetupCrashReporterTimeEnd = Date.now()
 
 parseCommandLine = ->
   version = app.getVersion()
