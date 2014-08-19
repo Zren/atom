@@ -29,10 +29,10 @@ class AtomWindow
 
     global.atomApplication.addWindow(this)
 
-    global.shellTime.shellBrowserWindowTimeStart = Date.now()
+    global.shellTime.shellNewBrowserWindowTimeStart = Date.now()
     @browserWindow = new BrowserWindow show: false, title: 'Atom', icon: @constructor.iconPath
     @handleEvents()
-    global.shellTime.shellBrowserWindowTimeEnd = Date.now()
+    global.shellTime.shellNewBrowserWindowTimeEnd = Date.now()
 
     loadSettings = _.extend({}, settings)
     loadSettings.windowState ?= '{}'
